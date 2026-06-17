@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useScores } from './hooks/useScores';
 import type { RunRecord } from './hooks/useScores';
 import html2canvas from 'html2canvas';
@@ -8,8 +8,35 @@ function App() {
   const { records, addRecord, deleteRecord, clearAll, stats } = useScores();
   const [view, setView] = useState<'dashboard' | 'input' | 'history'>('dashboard');
 
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    return (localStorage.getItem('shibaiter_theme') as 'dark' | 'light') || 'dark';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('shibaiter_theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
   return (
     <div className="app-container">
+      <button 
+        onClick={toggleTheme} 
+        style={{
+          position: 'absolute', top: 20, right: 20, 
+          background: 'var(--panel-bg)', border: '1px solid var(--panel-border)', 
+          borderRadius: '50%', width: 40, height: 40, 
+          cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '1.2rem', zIndex: 100, color: 'var(--text-main)', boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+        }}
+        title="テーマ切り替え"
+      >
+        {theme === 'dark' ? '☀️' : '🌙'}
+      </button>
+
       <h1 className="title-header animate-pop">SHIBAITER<br /><span style={{fontSize: '1.2rem', color: 'var(--text-main)'}}>for 夏の鮭祭り</span></h1>
       
       <div className="glass-panel switch-group animate-pop delay-1">
@@ -39,7 +66,7 @@ function Dashboard({ stats }: { stats: ReturnType<typeof useScores>['stats'] }) 
     setIsSharing(true);
     try {
       const canvas = await html2canvas(element, {
-        backgroundColor: '#121212',
+        backgroundColor: document.documentElement.getAttribute('data-theme') === 'light' ? '#F4F6F8' : '#121212',
         scale: 2,
         useCORS: true,
       });
