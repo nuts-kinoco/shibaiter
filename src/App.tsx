@@ -277,7 +277,7 @@ function InputForm({ onSave }: { onSave: (r: Omit<RunRecord, 'id' | 'timestamp'>
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!goldenEggs || !powerEggs) {
-      alert('金イクラとイクラの数は必須です！');
+      alert('納品数とイクラの数は必須です！');
       return;
     }
     onSave({
@@ -297,7 +297,7 @@ function InputForm({ onSave }: { onSave: (r: Omit<RunRecord, 'id' | 'timestamp'>
       
       <div className="stats-grid" style={{marginBottom: '16px'}}>
         <div className="input-group">
-          <label><img src="/images/golden_egg.png" style={{width: 20, marginRight: 6}}/>金イクラ</label>
+          <label><img src="/images/golden_egg.png" style={{width: 20, marginRight: 6}}/>納品数</label>
           <input type="number" min="0" className="styled-input" value={goldenEggs} onChange={e => setGoldenEggs(e.target.value)} required placeholder="例: 120" />
         </div>
         <div className="input-group">
