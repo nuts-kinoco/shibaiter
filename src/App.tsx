@@ -274,6 +274,16 @@ function InputForm({ onSave }: { onSave: (r: Omit<RunRecord, 'id' | 'timestamp'>
   const [boss, setBoss] = useState<string | null>(null);
   const [clearWave, setClearWave] = useState('3');
 
+  const handleReset = () => {
+    setGoldenEggs('');
+    setPowerEggs('');
+    setBronze('0');
+    setSilver('0');
+    setGold('0');
+    setBoss(null);
+    setClearWave('3');
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!goldenEggs || !powerEggs) {
@@ -298,11 +308,17 @@ function InputForm({ onSave }: { onSave: (r: Omit<RunRecord, 'id' | 'timestamp'>
       <div className="stats-grid" style={{marginBottom: '16px'}}>
         <div className="input-group">
           <label><img src="/images/golden_egg.png" style={{width: 20, marginRight: 6}}/>納品数</label>
-          <input type="number" min="0" className="styled-input" value={goldenEggs} onChange={e => setGoldenEggs(e.target.value)} required placeholder="例: 120" />
+          <div className="input-wrapper">
+            <input type="number" min="0" className="styled-input" value={goldenEggs} onChange={e => setGoldenEggs(e.target.value)} required placeholder="例: 120" />
+            {goldenEggs && <button type="button" className="clear-input-btn" onClick={() => setGoldenEggs('')}>×</button>}
+          </div>
         </div>
         <div className="input-group">
           <label><img src="/images/power_egg.svg" style={{width: 20, marginRight: 6}}/>イクラ</label>
-          <input type="number" min="0" className="styled-input" value={powerEggs} onChange={e => setPowerEggs(e.target.value)} required placeholder="例: 3500" />
+          <div className="input-wrapper">
+            <input type="number" min="0" className="styled-input" value={powerEggs} onChange={e => setPowerEggs(e.target.value)} required placeholder="例: 3500" />
+            {powerEggs && <button type="button" className="clear-input-btn" onClick={() => setPowerEggs('')}>×</button>}
+          </div>
         </div>
       </div>
 
@@ -349,13 +365,18 @@ function InputForm({ onSave }: { onSave: (r: Omit<RunRecord, 'id' | 'timestamp'>
         </div>
       )}
 
-      <button type="submit" className="btn" style={{marginTop: '20px'}}>記録を保存する</button>
+      <div style={{display: 'flex', gap: '12px', marginTop: '20px'}}>
+        <button type="button" className="btn btn-secondary" style={{flex: 1}} onClick={handleReset}>リセット</button>
+        <button type="submit" className="btn" style={{flex: 2}}>記録を保存する</button>
+      </div>
     </form>
   );
 }
 
 // --- History List Component ---
 function HistoryList({ records, onDelete, onClearAll }: { records: RunRecord[], onDelete: (id: string) => void, onClearAll: () => void }) {
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
+
   if (records.length === 0) {
     return <div className="glass-panel animate-pop delay-2"><p style={{textAlign:'center'}}>記録がありません。</p></div>;
   }
@@ -377,7 +398,15 @@ function HistoryList({ records, onDelete, onClearAll }: { records: RunRecord[], 
                 {record.bossDefeated && <span style={{fontSize: '0.9rem', background: 'var(--primary)', color: '#000', padding: '2px 8px', borderRadius: '12px', marginLeft: '12px'}}>オカシラ討伐</span>}
               </div>
             </div>
-            <button className="btn btn-secondary" style={{width: 'auto', padding: '8px', background: 'transparent', border: '1px solid var(--text-muted)'}} onClick={() => onDelete(record.id)}>🗑️</button>
+            {confirmingId === record.id ? (
+              <div className="delete-confirm-group animate-pop">
+                <span style={{fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 700}}>本当に削除？</span>
+                <button type="button" className="btn-confirm-delete" onClick={() => { onDelete(record.id); setConfirmingId(null); }}>削除</button>
+                <button type="button" className="btn-cancel-delete" onClick={() => setConfirmingId(null)}>戻る</button>
+              </div>
+            ) : (
+              <button type="button" className="btn btn-secondary" style={{width: 'auto', padding: '8px', background: 'transparent', border: '1px solid var(--text-muted)'}} onClick={() => setConfirmingId(record.id)}>🗑️</button>
+            )}
           </div>
         ))}
       </div>
