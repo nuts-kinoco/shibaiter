@@ -169,12 +169,12 @@ function EventInfoCard() {
       </div>
       {open && (
         <div className="animate-pop" style={{marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '0'}}>
-          <div className="event-row"><span className="event-key">🎯 形式</span><span>4人1チーム / タイカイサポート</span></div>
-          <div className="event-row"><span className="event-key">🗺️ ステージ</span><span>どんぴこ闘技場</span></div>
-          <div className="event-row"><span className="event-key">🔫 支給ブキ</span><span>オールランダム</span></div>
-          <div className="event-row"><span className="event-key">🦈 オカシラ</span><span>オカシラ連合</span></div>
+          <div className="event-row"><span className="event-key">形式</span><span>4人1チーム / タイカイサポート</span></div>
+          <div className="event-row"><span className="event-key">ステージ</span><span>どんぴこ闘技場</span></div>
+          <div className="event-row"><span className="event-key">支給ブキ</span><span>オールランダム</span></div>
+          <div className="event-row"><span className="event-key">オカシラ</span><span>オカシラ連合</span></div>
           <div style={{marginTop: '12px', padding: '12px', background: 'rgba(255,106,0,0.06)', borderRadius: '10px', border: '1px dashed rgba(255,106,0,0.25)'}}>
-            <div style={{fontSize: '0.78rem', color: 'var(--primary)', fontWeight: 900, marginBottom: '8px', letterSpacing: '1px'}}>⏳ 未発表</div>
+            <div style={{fontSize: '0.78rem', color: 'var(--primary)', fontWeight: 900, marginBottom: '8px', letterSpacing: '1px'}}>未発表</div>
             <div className="event-row"><span style={{color: 'var(--text-muted)'}}>集計方式</span><span className="tbd-badge">？</span></div>
             <div className="event-row"><span style={{color: 'var(--text-muted)'}}>上位N件・M件</span><span className="tbd-badge">？</span></div>
             <div className="event-row"><span style={{color: 'var(--text-muted)'}}>賞品</span><span className="tbd-badge">？</span></div>
