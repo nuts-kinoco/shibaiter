@@ -59,7 +59,7 @@
 }
 
 [data-theme="light"] .title-header {
-  background: linear-gradient(to right, #FF6A00, #E8D000); /* 少し濃い目の黄ゴールドでタイトルグラデーションの視認性をキープ */
+  background-image: linear-gradient(to right, #FF6A00, #E8D000); /* 少し濃い目の黄ゴールドでタイトルグラデーションの視認性をキープ */
 }
 
 * {
