@@ -183,7 +183,7 @@ function Dashboard({ stats, members, updateMember }: { stats: ReturnType<typeof 
   return (
     <div className="animate-pop delay-2">
       <div className="glass-panel" style={{paddingBottom: '24px'}}>
-        <h2 style={{marginBottom: '16px'}}>チームメンバー (任意)</h2>
+        <h2 style={{marginBottom: '16px'}}>チームメンバー</h2>
         <div className="stats-grid" style={{gridTemplateColumns: '1fr 1fr', marginTop: 0}}>
           {members.map((name, i) => (
             <input 
