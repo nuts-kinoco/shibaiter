@@ -58,6 +58,10 @@ function App() {
       <div className="share-capture-wrapper">
         <ShareImageCard stats={stats} members={members} teamName={teamName} settings={settings} records={records} id="share-capture" />
       </div>
+
+      <footer className="app-footer">
+        <p className="credit">Powered by <a href="https://x.com/natsukino_co" target="_blank" rel="noopener noreferrer">なつきのこ (@natsukino_co)</a></p>
+      </footer>
     </div>
   );
 }

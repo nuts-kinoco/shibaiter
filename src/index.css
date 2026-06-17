@@ -589,4 +589,30 @@ h1, h2, h3, h4 {
   color: var(--text-muted);
 }
 
+/* Footer Styling */
+.app-footer {
+  margin-top: 40px;
+  padding: 24px 0 10px;
+  text-align: center;
+  border-top: 1px solid var(--panel-border);
+}
+
+.app-footer .credit {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.app-footer a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 900;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+.app-footer a:hover {
+  color: var(--secondary);
+  text-shadow: 0 0 8px rgba(232, 255, 0, 0.4);
+}
+
 
