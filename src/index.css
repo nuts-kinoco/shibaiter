@@ -439,3 +439,154 @@ h1, h2, h3, h4 {
   color: var(--text-main);
 }
 
+/* ==============================
+   大会スコア パネル
+============================== */
+.score-result-panel::before {
+  background: linear-gradient(90deg, #FFD700, #FF6A00, #E8FF00);
+}
+
+.mode-badge {
+  display: inline-block;
+  background: rgba(255, 106, 0, 0.15);
+  border: 1px solid rgba(255, 106, 0, 0.4);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 16px;
+}
+
+.big-score {
+  font-size: 4.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #FFD700, #FF6A00);
+  -webkit-background-clip: text;
+  color: transparent;
+  text-align: center;
+  text-shadow: none;
+  filter: drop-shadow(0 0 16px rgba(255, 200, 0, 0.5));
+  margin: 8px 0 20px;
+  line-height: 1.1;
+}
+
+.score-unit {
+  font-size: 2rem;
+  margin-left: 6px;
+}
+
+.score-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.score-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.score-plus {
+  color: var(--secondary);
+}
+
+.penalty-row {
+  color: #FF5555;
+}
+
+.score-divider {
+  height: 1px;
+  background: var(--panel-border);
+  margin: 2px 0;
+}
+
+.total-score-row {
+  font-size: 1.2rem;
+  color: var(--primary);
+}
+
+/* 大会設定 インライン入力 */
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.inline-num-input {
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid var(--panel-border);
+  border-radius: 8px;
+  color: var(--text-main);
+  padding: 6px 10px;
+  font-size: 1.1rem;
+  font-family: inherit;
+  font-weight: 900;
+  width: 70px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.inline-num-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 8px rgba(255, 106, 0, 0.4);
+}
+
+/* ==============================
+   イベント情報カード
+============================== */
+.event-info-card::before {
+  background: linear-gradient(90deg, #14E814, #E8FF00, #FF6A00);
+}
+
+.event-badge {
+  background: linear-gradient(45deg, #14E814, #E8FF00);
+  color: #000;
+  font-size: 0.68rem;
+  font-weight: 900;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.event-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.event-row:last-child {
+  border-bottom: none;
+}
+
+.event-key {
+  color: var(--secondary);
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.tbd-badge {
+  background: rgba(255,255,255,0.08);
+  border: 1px dashed rgba(255,255,255,0.2);
+  border-radius: 6px;
+  padding: 1px 12px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+
