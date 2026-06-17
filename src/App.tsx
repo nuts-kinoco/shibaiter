@@ -107,8 +107,8 @@ function ShareImageCard({ stats, members, teamName, settings, records, id }: {
           {scoreBreakdown.total}<span style={{fontSize: '1.5rem'}}>pt</span>
         </div>
         <div style={{marginTop: 12, display: 'flex', flexDirection: 'column', gap: 6, fontSize: '0.9rem', fontWeight: 700}}>
-          <div style={{display: 'flex', justifyContent: 'space-between'}}><span>🥚 金イクラ</span><span>+{scoreBreakdown.golden}</span></div>
-          <div style={{display: 'flex', justifyContent: 'space-between'}}><span>🐠 ウロコ</span><span>+{scoreBreakdown.scale}</span></div>
+          <div style={{display: 'flex', justifyContent: 'space-between'}}><span><img src="/images/golden_egg.png" alt="金イクラ" style={{width: 18, height: 18, verticalAlign: '-3px', marginRight: 4}} />金イクラ</span><span>+{scoreBreakdown.golden}</span></div>
+          <div style={{display: 'flex', justifyContent: 'space-between'}}><span><img src="/images/scale_gold.png" alt="ウロコ" style={{width: 18, height: 18, verticalAlign: '-3px', marginRight: 4}} />ウロコ</span><span>+{scoreBreakdown.scale}</span></div>
           {scoreBreakdown.penalty !== 0 && (
             <div style={{display: 'flex', justifyContent: 'space-between', color: '#FF6666'}}><span>💀 ペナルティ</span><span>{scoreBreakdown.penalty}</span></div>
           )}
@@ -329,11 +329,11 @@ function Dashboard({ stats, members, updateMember, teamName, setTeamName, record
         <div className="big-score">{scoreBreakdown.total}<span className="score-unit">pt</span></div>
         <div className="score-breakdown">
           <div className="score-row">
-            <span>🥚 金イクラ</span>
+            <span><img src="/images/golden_egg.png" alt="金イクラ" style={{width: 22, height: 22, verticalAlign: '-4px', marginRight: 6}} />金イクラ</span>
             <span className="score-plus">+{scoreBreakdown.golden}</span>
           </div>
           <div className="score-row">
-            <span>🐠 ウロコポイント</span>
+            <span><img src="/images/scale_gold.png" alt="ウロコ" style={{width: 22, height: 22, verticalAlign: '-4px', marginRight: 6}} />ウロコポイント</span>
             <span className="score-plus">+{scoreBreakdown.scale}</span>
           </div>
           {scoreBreakdown.penalty !== 0 && (
@@ -576,7 +576,7 @@ function HistoryList({ records, onDelete, onClearAll }: { records: RunRecord[], 
                   )}
                 </div>
                 <div style={{fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '4px', display: 'flex', gap: '12px', flexWrap: 'wrap'}}>
-                  {scale > 0 && <span>🐠 +{scale}pt</span>}
+                  {scale > 0 && <span style={{display: 'flex', alignItems: 'center', gap: '4px'}}><img src="/images/scale_gold.png" alt="ウロコ" style={{width: 16, height: 16}} />+{scale}pt</span>}
                   {penalty < 0 && <span style={{color: '#FF6666'}}>💀 {penalty}pt</span>}
                   <span style={{color: 'var(--primary)', fontWeight: 700}}>計 {runScore}pt</span>
                 </div>
