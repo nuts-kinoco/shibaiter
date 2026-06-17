@@ -131,8 +131,11 @@ h1, h2, h3, h4 {
 .input-group label {
   font-weight: 700;
   margin-bottom: 8px;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: var(--secondary);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
 }
 
 .styled-input {
@@ -307,8 +310,16 @@ h1, h2, h3, h4 {
   font-size: 1.1rem;
   font-weight: 900;
   color: var(--secondary);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   text-align: center;
+}
+
+.share-team-name {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--text-main);
+  margin-bottom: 12px;
 }
 
 .share-members-grid {

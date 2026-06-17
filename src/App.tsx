@@ -7,7 +7,7 @@ import './index.css';
 
 function App() {
   const { records, addRecord, deleteRecord, clearAll, stats } = useScores();
-  const { members, updateMember } = useMembers();
+  const { members, updateMember, teamName, setTeamName } = useMembers();
   const [view, setView] = useState<'dashboard' | 'input' | 'history'>('dashboard');
 
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -39,7 +39,7 @@ function App() {
         {theme === 'dark' ? '☀️' : '🌙'}
       </button>
 
-      <h1 className="title-header animate-pop">SHIBAITER<br /><span style={{fontSize: '1.2rem', color: 'var(--text-main)'}}>for 夏の鮭祭り</span></h1>
+      <h1 className="title-header animate-pop">シバイター<br /><span style={{fontSize: '1.2rem', color: 'var(--text-main)'}}>for 夏の鮭祭り</span></h1>
       
       <div className="glass-panel switch-group animate-pop delay-1">
         <button className={`btn ${view === 'dashboard' ? '' : 'btn-secondary'}`} onClick={() => setView('dashboard')}>スコア</button>
@@ -47,33 +47,36 @@ function App() {
         <button className={`btn ${view === 'history' ? '' : 'btn-secondary'}`} onClick={() => setView('history')}>履歴</button>
       </div>
 
-      {view === 'dashboard' && <Dashboard stats={stats} members={members} updateMember={updateMember} />}
+      {view === 'dashboard' && <Dashboard stats={stats} members={members} updateMember={updateMember} teamName={teamName} setTeamName={setTeamName} />}
       {view === 'input' && <InputForm onSave={(record) => { addRecord(record); setView('dashboard'); }} />}
       {view === 'history' && <HistoryList records={records} onDelete={deleteRecord} onClearAll={clearAll} />}
       
       {/* 隠しシェア画像用DOM */}
       <div className="share-capture-wrapper">
-        <ShareImageCard stats={stats} members={members} id="share-capture" />
+        <ShareImageCard stats={stats} members={members} teamName={teamName} id="share-capture" />
       </div>
     </div>
   );
 }
 
 // --- Share Image Component (Hidden) ---
-function ShareImageCard({ stats, members, id }: { stats: ReturnType<typeof useScores>['stats'], members: string[], id: string }) {
+function ShareImageCard({ stats, members, teamName, id }: { stats: ReturnType<typeof useScores>['stats'], members: string[], teamName: string, id: string }) {
   const activeMembers = members.filter(m => m.trim() !== '');
   return (
     <div id={id} className="share-card">
-      <h2 className="share-card-title">SHIBAITER<br/><span style={{fontSize: '1.2rem'}}>夏の鮭祭り</span></h2>
+      <h2 className="share-card-title">シバイター<br/><span style={{fontSize: '1.2rem'}}>夏の鮭祭り</span></h2>
       
-      {activeMembers.length > 0 && (
+      { (activeMembers.length > 0 || teamName) && (
         <div className="share-members">
           <div className="share-members-title">TEAM MEMBERS</div>
-          <div className="share-members-grid">
-            {activeMembers.map((m, i) => (
-              <div key={i} className="share-member-item">{m}</div>
-            ))}
-          </div>
+          {teamName && <div className="share-team-name">{teamName}</div>}
+          {activeMembers.length > 0 && (
+            <div className="share-members-grid">
+              {activeMembers.map((m, i) => (
+                <div key={i} className="share-member-item">{m}</div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -116,7 +119,7 @@ function ShareImageCard({ stats, members, id }: { stats: ReturnType<typeof useSc
 }
 
 // --- Dashboard Component ---
-function Dashboard({ stats, members, updateMember }: { stats: ReturnType<typeof useScores>['stats'], members: string[], updateMember: (index: number, name: string) => void }) {
+function Dashboard({ stats, members, updateMember, teamName, setTeamName }: { stats: ReturnType<typeof useScores>['stats'], members: string[], updateMember: (index: number, name: string) => void, teamName: string, setTeamName: (name: string) => void }) {
   const [isSharing, setIsSharing] = useState(false);
 
   const handleShare = async () => {
@@ -139,7 +142,8 @@ function Dashboard({ stats, members, updateMember }: { stats: ReturnType<typeof 
         }
         
         const file = new File([blob], 'shibaiter_score.png', { type: 'image/png' });
-        const text = `夏の鮭祭り、現在の私の結果！\n🐟総納品数: ${stats.totalGolden}個\n👑最高納品: ${stats.maxGolden}個\n#スプラトゥーン3 #サーモンラン #夏の鮭祭り\n`;
+        const prefix = teamName ? `チーム【${teamName}】の` : '私の';
+        const text = `夏の鮭祭り、現在の${prefix}結果！\n🐟総納品数: ${stats.totalGolden}個\n👑最高納品: ${stats.maxGolden}個\n#スプラトゥーン3 #サーモンラン #夏の鮭祭り\n`;
         
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
@@ -184,6 +188,16 @@ function Dashboard({ stats, members, updateMember }: { stats: ReturnType<typeof 
     <div className="animate-pop delay-2">
       <div className="glass-panel" style={{paddingBottom: '24px'}}>
         <h2 style={{marginBottom: '16px'}}>チームメンバー</h2>
+        <div style={{marginBottom: '16px'}}>
+          <input 
+            type="text" 
+            className="styled-input" 
+            placeholder="チーム名（任意）" 
+            value={teamName}
+            onChange={e => setTeamName(e.target.value)}
+            style={{fontSize: '1.1rem', padding: '10px'}}
+          />
+        </div>
         <div className="stats-grid" style={{gridTemplateColumns: '1fr 1fr', marginTop: 0}}>
           {members.map((name, i) => (
             <input 
@@ -283,11 +297,11 @@ function InputForm({ onSave }: { onSave: (r: Omit<RunRecord, 'id' | 'timestamp'>
       
       <div className="stats-grid" style={{marginBottom: '16px'}}>
         <div className="input-group">
-          <label><img src="/images/golden_egg.png" style={{width: 20, verticalAlign: 'middle', marginRight: 8}}/>金イクラ納品数</label>
+          <label><img src="/images/golden_egg.png" style={{width: 20, marginRight: 6}}/>金イクラ</label>
           <input type="number" min="0" className="styled-input" value={goldenEggs} onChange={e => setGoldenEggs(e.target.value)} required placeholder="例: 120" />
         </div>
         <div className="input-group">
-          <label><img src="/images/power_egg.svg" style={{width: 20, verticalAlign: 'middle', marginRight: 8}}/>イクラ獲得数</label>
+          <label><img src="/images/power_egg.svg" style={{width: 20, marginRight: 6}}/>イクラ</label>
           <input type="number" min="0" className="styled-input" value={powerEggs} onChange={e => setPowerEggs(e.target.value)} required placeholder="例: 3500" />
         </div>
       </div>

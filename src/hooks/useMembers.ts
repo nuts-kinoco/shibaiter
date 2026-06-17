@@ -13,13 +13,20 @@ export function useMembers() {
         console.error('Failed to parse members from localStorage', e);
       }
     }
-    // デフォルトは空文字4つ
     return ['', '', '', ''];
+  });
+
+  const [teamName, setTeamName] = useState<string>(() => {
+    return localStorage.getItem('shibaiter_teamname') || '';
   });
 
   useEffect(() => {
     localStorage.setItem('shibaiter_members', JSON.stringify(members));
   }, [members]);
+
+  useEffect(() => {
+    localStorage.setItem('shibaiter_teamname', teamName);
+  }, [teamName]);
 
   const updateMember = (index: number, name: string) => {
     setMembers(prev => {
@@ -29,5 +36,5 @@ export function useMembers() {
     });
   };
 
-  return { members, updateMember };
+  return { members, updateMember, teamName, setTeamName };
 }
