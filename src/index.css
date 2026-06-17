@@ -17,6 +17,7 @@
   --panel-border: rgba(0, 0, 0, 0.1);
   --text-main: #333333;
   --text-muted: #666666;
+  --secondary: #D4A373; /* ライトモード用の見やすいブロンズ・アースイエロー */
 }
 
 [data-theme="light"] h1, [data-theme="light"] h2, [data-theme="light"] h3, [data-theme="light"] h4 {
@@ -55,6 +56,10 @@
 
 [data-theme="light"] .btn {
   color: #FFF;
+}
+
+[data-theme="light"] .title-header {
+  background: linear-gradient(to right, #FF6A00, #E8D000); /* 少し濃い目の黄ゴールドでタイトルグラデーションの視認性をキープ */
 }
 
 * {
