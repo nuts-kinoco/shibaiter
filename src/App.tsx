@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useScores } from './hooks/useScores';
+import { useMembers } from './hooks/useMembers';
 import type { RunRecord } from './hooks/useScores';
 import html2canvas from 'html2canvas';
 import './index.css';
 
 function App() {
   const { records, addRecord, deleteRecord, clearAll, stats } = useScores();
+  const { members, updateMember } = useMembers();
   const [view, setView] = useState<'dashboard' | 'input' | 'history'>('dashboard');
 
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
@@ -41,32 +43,91 @@ function App() {
       
       <div className="glass-panel switch-group animate-pop delay-1">
         <button className={`btn ${view === 'dashboard' ? '' : 'btn-secondary'}`} onClick={() => setView('dashboard')}>スコア</button>
-        <div style={{width: '16px'}}></div>
         <button className={`btn ${view === 'input' ? '' : 'btn-secondary'}`} onClick={() => setView('input')}>記録入力</button>
-        <div style={{width: '16px'}}></div>
         <button className={`btn ${view === 'history' ? '' : 'btn-secondary'}`} onClick={() => setView('history')}>履歴</button>
       </div>
 
-      {view === 'dashboard' && <Dashboard stats={stats} />}
+      {view === 'dashboard' && <Dashboard stats={stats} members={members} updateMember={updateMember} />}
       {view === 'input' && <InputForm onSave={(record) => { addRecord(record); setView('dashboard'); }} />}
       {view === 'history' && <HistoryList records={records} onDelete={deleteRecord} onClearAll={clearAll} />}
       
+      {/* 隠しシェア画像用DOM */}
+      <div className="share-capture-wrapper">
+        <ShareImageCard stats={stats} members={members} id="share-capture" />
+      </div>
+    </div>
+  );
+}
+
+// --- Share Image Component (Hidden) ---
+function ShareImageCard({ stats, members, id }: { stats: ReturnType<typeof useScores>['stats'], members: string[], id: string }) {
+  const activeMembers = members.filter(m => m.trim() !== '');
+  return (
+    <div id={id} className="share-card">
+      <h2 className="share-card-title">SHIBAITER<br/><span style={{fontSize: '1.2rem'}}>夏の鮭祭り</span></h2>
+      
+      {activeMembers.length > 0 && (
+        <div className="share-members">
+          <div className="share-members-title">TEAM MEMBERS</div>
+          <div className="share-members-grid">
+            {activeMembers.map((m, i) => (
+              <div key={i} className="share-member-item">{m}</div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="glass-panel" style={{marginBottom: 0}}>
+        <div className="stats-grid" style={{marginTop: 0}}>
+          <div className="stat-card" style={{gridColumn: 'span 2'}}>
+            <div className="stat-label">総納品数</div>
+            <div className="item-row" style={{justifyContent: 'center'}}>
+              <img src="/images/golden_egg.png" alt="金イクラ" className="item-icon" />
+              <div className="stat-value">{stats.totalGolden}</div>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">最高納品</div>
+            <div className="stat-value" style={{fontSize: '2rem'}}>{stats.maxGolden}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">バイト数</div>
+            <div className="stat-value" style={{fontSize: '2rem'}}>{stats.totalRuns}</div>
+          </div>
+        </div>
+        
+        <div className="stats-grid" style={{gridTemplateColumns: 'repeat(3, 1fr)'}}>
+          <div className="stat-card" style={{borderColor: '#8b4513', padding: '12px'}}>
+            <img src="/images/scale_bronze.png" alt="銅" className="item-icon" style={{width: 32, height: 32}} />
+            <div className="stat-value" style={{color: '#cd7f32', fontSize: '1.8rem'}}>{stats.totalBronze}</div>
+          </div>
+          <div className="stat-card" style={{borderColor: '#808080', padding: '12px'}}>
+            <img src="/images/scale_silver.png" alt="銀" className="item-icon" style={{width: 32, height: 32}} />
+            <div className="stat-value" style={{color: '#C0C0C0', fontSize: '1.8rem'}}>{stats.totalSilver}</div>
+          </div>
+          <div className="stat-card" style={{borderColor: '#DAA520', padding: '12px'}}>
+            <img src="/images/scale_gold.png" alt="金" className="item-icon" style={{width: 32, height: 32}} />
+            <div className="stat-value" style={{color: '#FFD700', fontSize: '1.8rem'}}>{stats.totalGold}</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
 // --- Dashboard Component ---
-function Dashboard({ stats }: { stats: ReturnType<typeof useScores>['stats'] }) {
+function Dashboard({ stats, members, updateMember }: { stats: ReturnType<typeof useScores>['stats'], members: string[], updateMember: (index: number, name: string) => void }) {
   const [isSharing, setIsSharing] = useState(false);
 
   const handleShare = async () => {
-    const element = document.getElementById('dashboard-capture');
+    // 画面のダッシュボードではなく、隠しコンポーネントをキャプチャする
+    const element = document.getElementById('share-capture');
     if (!element) return;
     
     setIsSharing(true);
     try {
       const canvas = await html2canvas(element, {
-        backgroundColor: document.documentElement.getAttribute('data-theme') === 'light' ? '#F4F6F8' : '#121212',
+        backgroundColor: null, // 背景はshare-cardに設定済み
         scale: 2,
         useCORS: true,
       });
@@ -78,7 +139,7 @@ function Dashboard({ stats }: { stats: ReturnType<typeof useScores>['stats'] }) 
         }
         
         const file = new File([blob], 'shibaiter_score.png', { type: 'image/png' });
-        const text = `夏の鮭祭り、現在の私の結果！\n🐟金イクラ: ${stats.totalGolden}個\n👑最高納品: ${stats.maxGolden}個\n#スプラトゥーン3 #サーモンラン #夏の鮭祭り\n`;
+        const text = `夏の鮭祭り、現在の私の結果！\n🐟総納品数: ${stats.totalGolden}個\n👑最高納品: ${stats.maxGolden}個\n#スプラトゥーン3 #サーモンラン #夏の鮭祭り\n`;
         
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           try {
@@ -120,51 +181,70 @@ function Dashboard({ stats }: { stats: ReturnType<typeof useScores>['stats'] }) 
   };
 
   return (
-    <div className="glass-panel animate-pop delay-2" id="dashboard-capture" style={{paddingBottom: '32px'}}>
-      <h2>大会スコアボード</h2>
-      <div className="stats-grid">
-        <div className="stat-card">
-          <div className="stat-label">総納品数 (金イクラ)</div>
-          <div className="item-row" style={{justifyContent: 'center'}}>
-            <img src="/images/golden_egg.png" alt="金イクラ" className="item-icon" />
-            <div className="stat-value">{stats.totalGolden}</div>
-          </div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">最高納品数</div>
-          <div className="stat-value">{stats.maxGolden}</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">バイト回数</div>
-          <div className="stat-value">{stats.totalRuns}</div>
-        </div>
-      </div>
-      
-      <h3 style={{marginTop: '24px', marginBottom: '16px', color: 'var(--secondary)'}}>獲得ウロコ総数</h3>
-      <div className="stats-grid" style={{gridTemplateColumns: 'repeat(3, 1fr)'}}>
-        <div className="stat-card" style={{borderColor: '#8b4513'}}>
-          <img src="/images/scale_bronze.png" alt="銅" className="item-icon" />
-          <div className="stat-value" style={{color: '#cd7f32'}}>{stats.totalBronze}</div>
-        </div>
-        <div className="stat-card" style={{borderColor: '#808080'}}>
-          <img src="/images/scale_silver.png" alt="銀" className="item-icon" />
-          <div className="stat-value" style={{color: '#C0C0C0'}}>{stats.totalSilver}</div>
-        </div>
-        <div className="stat-card" style={{borderColor: '#DAA520'}}>
-          <img src="/images/scale_gold.png" alt="金" className="item-icon" />
-          <div className="stat-value" style={{color: '#FFD700'}}>{stats.totalGold}</div>
+    <div className="animate-pop delay-2">
+      <div className="glass-panel" style={{paddingBottom: '24px'}}>
+        <h2 style={{marginBottom: '16px'}}>チームメンバー (任意)</h2>
+        <div className="stats-grid" style={{gridTemplateColumns: '1fr 1fr', marginTop: 0}}>
+          {members.map((name, i) => (
+            <input 
+              key={i}
+              type="text" 
+              className="styled-input" 
+              placeholder={`メンバー ${i + 1}`} 
+              value={name}
+              onChange={e => updateMember(i, e.target.value)}
+              style={{fontSize: '1rem', padding: '8px'}}
+            />
+          ))}
         </div>
       </div>
 
-      <div data-html2canvas-ignore style={{marginTop: '32px'}}>
-        <button 
-          className="btn" 
-          style={{background: 'linear-gradient(45deg, #1DA1F2, #00C6FF)', color: '#FFF'}} 
-          onClick={handleShare}
-          disabled={isSharing}
-        >
-          {isSharing ? '画像生成中...' : '𝕏 で結果をシェアする'}
-        </button>
+      <div className="glass-panel" style={{paddingBottom: '32px'}}>
+        <h2>大会スコアボード</h2>
+        <div className="stats-grid">
+          <div className="stat-card">
+            <div className="stat-label">総納品数</div>
+            <div className="item-row" style={{justifyContent: 'center'}}>
+              <img src="/images/golden_egg.png" alt="金イクラ" className="item-icon" />
+              <div className="stat-value">{stats.totalGolden}</div>
+            </div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">最高納品数</div>
+            <div className="stat-value">{stats.maxGolden}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">バイト回数</div>
+            <div className="stat-value">{stats.totalRuns}</div>
+          </div>
+        </div>
+        
+        <h3 style={{marginTop: '24px', marginBottom: '16px', color: 'var(--secondary)'}}>獲得ウロコ総数</h3>
+        <div className="stats-grid" style={{gridTemplateColumns: 'repeat(3, 1fr)'}}>
+          <div className="stat-card" style={{borderColor: '#8b4513'}}>
+            <img src="/images/scale_bronze.png" alt="銅" className="item-icon" />
+            <div className="stat-value" style={{color: '#cd7f32'}}>{stats.totalBronze}</div>
+          </div>
+          <div className="stat-card" style={{borderColor: '#808080'}}>
+            <img src="/images/scale_silver.png" alt="銀" className="item-icon" />
+            <div className="stat-value" style={{color: '#C0C0C0'}}>{stats.totalSilver}</div>
+          </div>
+          <div className="stat-card" style={{borderColor: '#DAA520'}}>
+            <img src="/images/scale_gold.png" alt="金" className="item-icon" />
+            <div className="stat-value" style={{color: '#FFD700'}}>{stats.totalGold}</div>
+          </div>
+        </div>
+
+        <div style={{marginTop: '32px'}}>
+          <button 
+            className="btn" 
+            style={{background: 'linear-gradient(45deg, #1DA1F2, #00C6FF)', color: '#FFF'}} 
+            onClick={handleShare}
+            disabled={isSharing}
+          >
+            {isSharing ? '画像生成中...' : '𝕏 で結果をシェアする'}
+          </button>
+        </div>
       </div>
     </div>
   );
