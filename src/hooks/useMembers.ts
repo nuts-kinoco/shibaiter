@@ -6,8 +6,10 @@ export function useMembers() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length === 4) {
-          return parsed;
+        if (Array.isArray(parsed) && parsed.every(v => typeof v === 'string')) {
+          // 保存済みの要素数が現在の4名より少ない場合は空文字で補完
+          const normalized = Array.from({ length: 4 }, (_, i) => parsed[i] ?? '');
+          return normalized;
         }
       } catch (e) {
         console.error('Failed to parse members from localStorage', e);

@@ -34,9 +34,11 @@ export function useScores() {
       id: crypto.randomUUID(),
       timestamp: Date.now(),
     };
-    const updated = [newRecord, ...records];
-    setRecords(updated);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    setRecords(prev => {
+      const updated = [newRecord, ...prev];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const deleteRecord = (id: string) => {

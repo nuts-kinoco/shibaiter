@@ -162,7 +162,7 @@ function Dashboard({ stats, members, updateMember, teamName, setTeamName }: { st
           await navigator.clipboard.write([
             new window.ClipboardItem({ 'image/png': blob })
           ]);
-          alert('スコア画像をクリップボードにコピーしました！\\n次にX(Twitter)の投稿画面が開くので、画像を貼り付けて投稿してください🦑');
+          alert('スコア画像をクリップボードにコピーしました！\n次にX(Twitter)の投稿画面が開くので、画像を貼り付けて投稿してください🦑');
         } catch (e) {
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
@@ -170,7 +170,7 @@ function Dashboard({ stats, members, updateMember, teamName, setTeamName }: { st
           a.download = 'shibaiter_score.png';
           a.click();
           URL.revokeObjectURL(url);
-          alert('スコア画像をダウンロードしました！\\n次にX(Twitter)の投稿画面が開くので、ダウンロードした画像を添付して投稿してください🦑');
+          alert('スコア画像をダウンロードしました！\n次にX(Twitter)の投稿画面が開くので、ダウンロードした画像を添付して投稿してください🦑');
         }
         
         const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
@@ -286,16 +286,18 @@ function InputForm({ onSave }: { onSave: (r: Omit<RunRecord, 'id' | 'timestamp'>
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!goldenEggs || !powerEggs) {
-      alert('納品数とイクラの数は必須です！');
+    const golden = parseInt(goldenEggs);
+    const power = parseInt(powerEggs);
+    if (isNaN(golden) || isNaN(power) || golden < 0 || power < 0) {
+      alert('納品数とイクラの数を正しく入力してください！');
       return;
     }
     onSave({
-      goldenEggs: parseInt(goldenEggs),
-      powerEggs: parseInt(powerEggs),
-      bronzeScale: parseInt(bronze),
-      silverScale: parseInt(silver),
-      goldScale: parseInt(gold),
+      goldenEggs: golden,
+      powerEggs: power,
+      bronzeScale: parseInt(bronze) || 0,
+      silverScale: parseInt(silver) || 0,
+      goldScale: parseInt(gold) || 0,
       bossDefeated: boss,
       clearWave: parseInt(clearWave)
     });
@@ -336,14 +338,14 @@ function InputForm({ onSave }: { onSave: (r: Omit<RunRecord, 'id' | 'timestamp'>
         <div className="glass-panel" style={{background: 'rgba(255,255,255,0.05)', padding: '16px'}}>
           <h3 style={{marginBottom: '12px'}}>オカシラシャケ討伐</h3>
           <div className="stats-grid" style={{gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '16px'}}>
-             <div className={`stat-card ${boss === 'yokozuna' ? 'selected' : ''}`} onClick={() => setBoss(boss === 'yokozuna' ? null : 'yokozuna')} style={{cursor: 'pointer', border: boss === 'yokozuna' ? '2px solid var(--primary)' : ''}}>
-               <img src="/images/boss_yokozuna.svg" className="item-icon"/>
+             <div role="button" tabIndex={0} className={`stat-card ${boss === 'yokozuna' ? 'selected' : ''}`} onClick={() => setBoss(boss === 'yokozuna' ? null : 'yokozuna')} onKeyDown={e => e.key === 'Enter' && setBoss(boss === 'yokozuna' ? null : 'yokozuna')} style={{cursor: 'pointer', border: boss === 'yokozuna' ? '2px solid var(--primary)' : ''}}>
+               <img src="/images/boss_yokozuna.svg" alt="ヨコヅナ" className="item-icon"/>
              </div>
-             <div className={`stat-card ${boss === 'tatsu' ? 'selected' : ''}`} onClick={() => setBoss(boss === 'tatsu' ? null : 'tatsu')} style={{cursor: 'pointer', border: boss === 'tatsu' ? '2px solid var(--primary)' : ''}}>
-               <img src="/images/boss_tatsu.svg" className="item-icon"/>
+             <div role="button" tabIndex={0} className={`stat-card ${boss === 'tatsu' ? 'selected' : ''}`} onClick={() => setBoss(boss === 'tatsu' ? null : 'tatsu')} onKeyDown={e => e.key === 'Enter' && setBoss(boss === 'tatsu' ? null : 'tatsu')} style={{cursor: 'pointer', border: boss === 'tatsu' ? '2px solid var(--primary)' : ''}}>
+               <img src="/images/boss_tatsu.svg" alt="テッパン" className="item-icon"/>
              </div>
-             <div className={`stat-card ${boss === 'joe' ? 'selected' : ''}`} onClick={() => setBoss(boss === 'joe' ? null : 'joe')} style={{cursor: 'pointer', border: boss === 'joe' ? '2px solid var(--primary)' : ''}}>
-               <img src="/images/boss_joe.svg" className="item-icon"/>
+             <div role="button" tabIndex={0} className={`stat-card ${boss === 'joe' ? 'selected' : ''}`} onClick={() => setBoss(boss === 'joe' ? null : 'joe')} onKeyDown={e => e.key === 'Enter' && setBoss(boss === 'joe' ? null : 'joe')} style={{cursor: 'pointer', border: boss === 'joe' ? '2px solid var(--primary)' : ''}}>
+               <img src="/images/boss_joe.svg" alt="ジョー" className="item-icon"/>
              </div>
           </div>
 
